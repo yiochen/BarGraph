@@ -15,19 +15,20 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 	@Override
 	public void paint(Graphics g) {
 		if (model==null) return;
+		
 		g.setColor(Color.black);
 		for (int i=0; i<model.getLength();i++){
 			g.fillRect(i*(BAR_WIDTH+BAR_INTERVAL),0,BAR_WIDTH,BAR_UNIT*model.get(i));
 		}
 	}
-	@Override
 	public void onDataChange(DataModel model) {
 		this.model=model;
+		revalidate();
 		repaint();
 	}
-	@Override
 	public void onAmountOfDataPointsChange(DataModel model) {
 		this.model=model;
+		revalidate();
 		repaint();
 	}
 }

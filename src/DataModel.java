@@ -10,18 +10,21 @@ public class DataModel {
 	
 	public static DataModel getDataModel(){
 		if (mModel==null){
-			mModel=new DataModel(0,0);
+			mModel=new DataModel(1,0);
 			return mModel;
 			}
 		else return mModel;
 	}
 	
 	private DataModel(int n,int initialValue) {
-		controller=new Controller(this);
+		this.controller=null;
 		data=new ArrayList<Integer>();
 		for (int i=0; i<n;i++ ){
 			data.add(initialValue);
 		}
+	}
+	public void setController(Controller controller){
+		this.controller=controller;
 	}
 	public int get(int index){
 		return data.get(index);

@@ -5,6 +5,8 @@ public class Controller{
 		private DataModel model;
 		public Controller(DataModel model) {
 			this.model=model;
+			model.setController(this);
+			views=new ArrayList<DataModel.Observer>();
 			// TODO Auto-generated constructor stub
 		}
 		public void addObserver(DataModel.Observer view){
