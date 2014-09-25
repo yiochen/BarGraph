@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -13,7 +14,12 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 		
 	}
 	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(200,100);
+	}
+	@Override
 	public void paint(Graphics g) {
+		g.clearRect(0, 0, 1000, 1000);
 		if (model==null) return;
 		
 		g.setColor(Color.black);

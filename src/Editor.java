@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -14,7 +15,9 @@ public class Editor extends JPanel {
 	public Editor(final DataModel model) {
 		this.model = model;
 		inputArray = new ArrayList<JTextField>();
+		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		JTextField textInput = new JTextField();
+		textInput.setColumns(10);
 		textInput.setText("0");
 		inputArray.add(textInput);
 
@@ -35,6 +38,7 @@ public class Editor extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				model.add(0);
 				JTextField newText = new JTextField("0");
+				newText.setColumns(10);
 				inputArray.add(newText);
 				mEditor.add(newText);
 				mEditor.revalidate();
