@@ -15,11 +15,13 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 	}
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(200,100);
+		if (model==null) return new Dimension(200,100);
+		else return new Dimension(model.getLength()*(BAR_WIDTH+BAR_INTERVAL), 100);
 	}
 	@Override
-	public void paint(Graphics g) {
-		g.clearRect(0, 0, 1000, 1000);
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
 		if (model==null) return;
 		
 		g.setColor(Color.black);
@@ -29,12 +31,12 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 	}
 	public void onDataChange(DataModel model) {
 		this.model=model;
-		revalidate();
+		
 		repaint();
 	}
 	public void onAmountOfDataPointsChange(DataModel model) {
 		this.model=model;
-		revalidate();
+		
 		repaint();
 	}
 }

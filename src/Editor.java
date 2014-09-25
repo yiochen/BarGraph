@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -12,6 +13,11 @@ public class Editor extends JPanel {
 	private final Editor mEditor = this;
 	private final DataModel model;
 
+	@Override
+	public Dimension getPreferredSize() {
+		if (model==null) return new Dimension(300,100);
+		else return new Dimension(300,90+model.getLength()*50);
+	}
 	public Editor(final DataModel model) {
 		this.model = model;
 		inputArray = new ArrayList<JTextField>();
@@ -22,6 +28,7 @@ public class Editor extends JPanel {
 		inputArray.add(textInput);
 
 		JButton refreshButton = new JButton("refresh");
+		refreshButton.setPreferredSize(new Dimension(200,30));
 		this.add(refreshButton);
 		refreshButton.addActionListener(new ActionListener() {
 
@@ -32,6 +39,7 @@ public class Editor extends JPanel {
 			}
 		});
 		JButton addButton = new JButton("add field");
+		addButton.setPreferredSize(new Dimension(300,30));
 		this.add(addButton);
 		addButton.addActionListener(new ActionListener() {
 
@@ -48,6 +56,7 @@ public class Editor extends JPanel {
 		});
 
 		JButton removeButton = new JButton("remove field");
+		removeButton.setPreferredSize(new Dimension(200,30));
 		this.add(removeButton);
 		removeButton.addActionListener(new ActionListener() {
 

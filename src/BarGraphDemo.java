@@ -10,11 +10,12 @@ public class BarGraphDemo extends JFrame{
 	public BarGraphDemo() {
 		setTitle("BarGraphDemo");
 	}
-	@Override
+	/*
+	 
 	public Dimension getPreferredSize() {
 		// TODO Auto-generated method stub
 		return new Dimension(600,400);
-	}
+	}*/
 
 	public static void main(String[] args) {
 
