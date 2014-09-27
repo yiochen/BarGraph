@@ -35,6 +35,9 @@ public class DataModel {
 		return data.size();
 	}
 
+	public void refresh(){
+		controller.onDataChange();
+	}
 	public void change(int index, int value) {
 		data.set(index, value);
 		controller.onDataChange();
@@ -61,5 +64,34 @@ public class DataModel {
 
 		void onAmountOfDataPointsChange(DataModel model);
 	}
+	
+	public static interface Strategy{
+		int valueToHeight(int value);
+		int heightToValue(int height);
+	}
+	
+	public static class LinearStrategy implements Strategy{
 
+		public int valueToHeight(int value) {
+			return value*BarGraphView.BAR_UNIT;
+		}
+
+		public int heightToValue(int height) {
+			return height/BarGraphView.BAR_UNIT;
+		}
+		
+	}
+
+	public static class LogStrategy implements Strategy{
+
+		
+		public int valueToHeight(int value) {
+			return (int)(Math.log(value)*BarGraphView.BAR_UNIT);
+		}
+
+		public int heightToValue(int height) {
+			return (int)(Math.exp(height/BarGraphView.BAR_UNIT));
+		}
+		
+	}
 }

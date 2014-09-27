@@ -9,25 +9,31 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 public class BarGraphView extends JPanel implements DataModel.Observer {
-	private static final int BAR_WIDTH = 20;
-	private static final int BAR_UNIT = 5;
+	public static int BAR_WIDTH = 20;
+	public static int BAR_UNIT = 5;
+	
+	public static final int BAR_MIN_UNIT=1;
+	public static final int BAR_MAX_UNIT=10;
+	
 	private DataModel model;
+	private BarGraphDemo mainApp;
 
 	private int getIndex(MouseEvent e) {
 		return e.getX() / BAR_WIDTH;
 	}
 
-	private int getNewHeight(MouseEvent e) {
-		return e.getY() / BAR_UNIT;
+	private int getNewValue(MouseEvent e) {
+		return mainApp.getStrategy().heightToValue(e.getY());
 	}
 	private void processMouse(MouseEvent e){
 		int index = getIndex(e);
-		int newHeight = getNewHeight(e);
+		int newHeight = getNewValue(e);
 		if (index < model.getLength()&& index>=0) {
 			model.set(index, newHeight);
 		}
 	}
-	public BarGraphView() {
+	public BarGraphView(BarGraphDemo mainApp) {
+		this.mainApp=mainApp;
 		this.setBorder(BorderFactory.createDashedBorder(Color.black));
 		this.addMouseMotionListener(new MouseMotionListener() {
 			
@@ -75,7 +81,7 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 	}
 
 	public int getColumnY(int index) {
-		return model.get(index) * BAR_UNIT;
+		return mainApp.getStrategy().valueToHeight(model.get(index));
 	}
 
 	@Override

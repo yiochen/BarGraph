@@ -6,17 +6,26 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Editor extends JPanel implements DataModel.Observer {
 	private ArrayList<JTextField> inputArray;
 	private final Editor mEditor = this;
 	private final DataModel model;
+	private BarGraphDemo mainApp;
 
 	private static final int WIDTH = 100;
 	private static final int HEIGHT = 30;
+
+	private static final String LINEAR = "linear";
+	private static final String LOG = "logarithmic";
 
 	private JTextField newText(int index, String initialText) {
 		JTextField textInput = new JTextField();
@@ -25,6 +34,49 @@ public class Editor extends JPanel implements DataModel.Observer {
 		textInput.setMaximumSize(new Dimension(WIDTH, HEIGHT));
 		textInput.setMinimumSize(new Dimension(WIDTH, HEIGHT));
 		return textInput;
+	}
+
+	private JPanel createControllerPane() {
+		JPanel newPane = new JPanel();
+		newPane.setLayout(new BoxLayout(newPane, BoxLayout.Y_AXIS));
+		final JSlider slider = new JSlider(JSlider.HORIZONTAL,
+				BarGraphView.BAR_MIN_UNIT, BarGraphView.BAR_MAX_UNIT,
+				BarGraphView.BAR_UNIT);
+		newPane.add(slider);
+		slider.addChangeListener(new ChangeListener() {
+
+			public void stateChanged(ChangeEvent e) {
+				BarGraphView.BAR_UNIT = slider.getValue();
+				model.refresh();
+			}
+		});
+
+		JRadioButton linearButton = new JRadioButton(LINEAR);
+		linearButton.setActionCommand(LINEAR);
+		linearButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				mainApp.setStrategy(new DataModel.LinearStrategy());
+
+			}
+		});
+		linearButton.setSelected(true);
+		JRadioButton logButton = new JRadioButton(LOG);
+		logButton.setActionCommand(LOG);
+		logButton.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				mainApp.setStrategy(new DataModel.LogStrategy());
+			}
+		});
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(linearButton);
+		group.add(logButton);
+		newPane.add(linearButton);
+		newPane.add(logButton);
+
+		return newPane;
 	}
 
 	private JPanel createButtonPane() {
@@ -97,11 +149,13 @@ public class Editor extends JPanel implements DataModel.Observer {
 
 	}
 
-	public Editor(final DataModel model) {
+	public Editor(final DataModel model, BarGraphDemo mainApp) {
 		this.model = model;
+		this.mainApp = mainApp;
 		inputArray = new ArrayList<JTextField>();
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(createButtonPane());
+		this.add(createControllerPane());
 
 	}
 
