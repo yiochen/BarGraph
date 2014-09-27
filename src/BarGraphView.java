@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -12,9 +13,33 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 	private static final int BAR_UNIT = 5;
 	private DataModel model;
 
+	private int getIndex(MouseEvent e) {
+		return e.getX() / BAR_WIDTH;
+	}
+
+	private int getNewHeight(MouseEvent e) {
+		return e.getY() / BAR_UNIT;
+	}
+	private void processMouse(MouseEvent e){
+		int index = getIndex(e);
+		int newHeight = getNewHeight(e);
+		if (index < model.getLength()&& index>=0) {
+			model.set(index, newHeight);
+		}
+	}
 	public BarGraphView() {
 		this.setBorder(BorderFactory.createDashedBorder(Color.black));
-		;
+		this.addMouseMotionListener(new MouseMotionListener() {
+			
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void mouseDragged(MouseEvent e) {
+				processMouse(e);
+			}
+		});
 		this.addMouseListener(new MouseListener() {
 
 			public void mouseReleased(MouseEvent e) {
@@ -23,8 +48,8 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 			}
 
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
+				processMouse(e);
+				
 			}
 
 			public void mouseExited(MouseEvent e) {
@@ -37,20 +62,10 @@ public class BarGraphView extends JPanel implements DataModel.Observer {
 
 			}
 
-			private int getIndex(MouseEvent e) {
-				return e.getX() / BAR_WIDTH;
-			}
-
-			private int getNewHeight(MouseEvent e) {
-				return e.getY() / BAR_UNIT;
-			}
+			
 
 			public void mouseClicked(MouseEvent e) {
-				int index = getIndex(e);
-				int newHeight = getNewHeight(e);
-				if (index < model.getLength()) {
-					model.set(index, newHeight);
-				}
+				processMouse(e);
 			}
 		});
 	}
