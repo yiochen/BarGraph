@@ -1,6 +1,8 @@
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -8,45 +10,66 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class Editor extends JPanel {
+public class Editor extends JPanel implements DataModel.Observer {
 	private ArrayList<JTextField> inputArray;
 	private final Editor mEditor = this;
 	private final DataModel model;
 
-	@Override
-	public Dimension getPreferredSize() {
-		if (model==null) return new Dimension(300,100);
-		else return new Dimension(300,90+model.getLength()*50);
-	}
-	public Editor(final DataModel model) {
-		this.model = model;
-		inputArray = new ArrayList<JTextField>();
-		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+	private static final int WIDTH = 100;
+	private static final int HEIGHT = 30;
+
+	private JTextField newText(int index, String initialText) {
 		JTextField textInput = new JTextField();
-		textInput.setColumns(10);
-		textInput.setText("0");
-		inputArray.add(textInput);
+		textInput.setText(initialText);
+		textInput.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		textInput.setMaximumSize(new Dimension(WIDTH, HEIGHT));
+		textInput.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+		return textInput;
+	}
+
+	private JPanel createButtonPane() {
+		JPanel pane = new JPanel();
+		pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
 
 		JButton refreshButton = new JButton("refresh");
-		refreshButton.setPreferredSize(new Dimension(200,30));
-		this.add(refreshButton);
+		pane.add(refreshButton);
 		refreshButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < inputArray.size(); i++) {
-					model.set(i, Integer.parseInt(inputArray.get(i).getText()));
+					if (inputArray.get(i).getText().isEmpty())
+						model.set(i, 0);
+					else
+						model.set(i,
+								Integer.parseInt(inputArray.get(i).getText()));
 				}
 			}
 		});
+
 		JButton addButton = new JButton("add field");
-		addButton.setPreferredSize(new Dimension(300,30));
-		this.add(addButton);
+
+		pane.add(addButton);
 		addButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				model.add(0);
-				JTextField newText = new JTextField("0");
-				newText.setColumns(10);
+
+				final int index = model.add(0);
+				final JTextField newText = newText(index, "");
+
+				newText.addFocusListener(new FocusListener() {
+
+					public void focusLost(FocusEvent e) {
+						int attemptInterpret = Integer.parseInt(newText
+								.getText().toString());
+						model.set(index, attemptInterpret);
+					}
+
+					public void focusGained(FocusEvent e) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+
 				inputArray.add(newText);
 				mEditor.add(newText);
 				mEditor.revalidate();
@@ -55,9 +78,9 @@ public class Editor extends JPanel {
 			}
 		});
 
-		JButton removeButton = new JButton("remove field");
-		removeButton.setPreferredSize(new Dimension(200,30));
-		this.add(removeButton);
+		JButton removeButton = new JButton("remove");
+		// removeButton.setPreferredSize(new Dimension(200, 30));
+		pane.add(removeButton);
 		removeButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -67,11 +90,30 @@ public class Editor extends JPanel {
 
 				JTextField removedText = inputArray.remove(inputArray.size() - 1);
 				mEditor.remove(removedText);
-				mEditor.revalidate();
 				mEditor.repaint();
 			}
 		});
-		this.add(textInput);
+		return pane;
+
+	}
+
+	public Editor(final DataModel model) {
+		this.model = model;
+		inputArray = new ArrayList<JTextField>();
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.add(createButtonPane());
+
+	}
+
+	public void onDataChange(DataModel model) {
+		for (int i = 0; i < inputArray.size(); i++) {
+			inputArray.get(i).setText("" + model.get(i));
+		}
+	}
+
+	public void onAmountOfDataPointsChange(DataModel model) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
